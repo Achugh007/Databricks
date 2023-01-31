@@ -1,0 +1,56 @@
+from pyspark.sql.functions import broadcast
+
+# Create the large DataFrame
+large_df = spark.createDataFrame([(1, "foo"), (2, "bar"), (3, "baz")], ["id", "name"])
+
+# Create the small DataFrame
+small_df = spark.createDataFrame([(1, "A"), (2, "B")], ["id", "value"])
+
+# Perform the broadcast join
+result_df = large_df.join(broadcast(small_df), on="id")
+
+# Show the result
+result_df.show()
+
+
+# A sample data is created with Name, ID, and ADD as the field.
+data1 = [{'Name':'Jhon','ID':21.528,'Add':'USA'},{'Name':'Joe','ID':3.69,'Add':'USA'},{'Name':'Tina','ID':2.48,'Add':'IND'},{'Name':'Jhon','ID':22.22, 'Add':'USA'},{'Name':'Joe','ID':5.33,'Add':'INA'}]
+
+
+# RDD is created using sc.parallelize.
+a = sc.parallelize(data1)
+
+
+# Created Data Frame using Spark.createDataFrame.
+b = spark.createDataFrame(a)
+b.show()
+
+
+# Let us create the other data frame with data2. This data frame created can be used to broadcast the value and then join operation can be used over it.
+
+data2 = [{'Name':'Jhon','ID':21.528,'Add':'USA'},{'Name':'Joe','ID':3.69,'Add':'USeA'},{'Name':'Tina','ID':2.48,'Add':'IND'},{'Name':'Jhon','ID':22.22, 'Add':'USdA'},{'Name':'Joe','ID':5.33,'Add':'rsa'}]
+c = sc.parallelize(data2)
+d = spark.createDataFrame(c)
+
+
+# Let us try to broadcast the data in the data frame, the method broadcast is used to broadcast the data frame out of it.
+e = broadcast(b)
+
+
+# Let us now join both the data frame using a particular column name out of it. This avoids the data shuffling throughout the network in PySpark application.
+
+f = d.join(broadcast(e),d.Add == e.Add)
+
+
+# The condition is checked and then the join operation is performed on it.
+f.show()
+
+
+# Let us try to understand the physical plan out of it.
+f.explain()
+
+
+# We can also do the join operation over the other columns also which can be further used for the creation of a new data frame.
+f = d.join(broadcast(e),d.Name == e.Name)
+f.show()
+
