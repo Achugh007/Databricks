@@ -1,0 +1,33 @@
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName('partion').getOrCreate()
+input = "/FileStore/tables/train.csv"
+df = spark.read.csv(input, header='True', inferSchema=True)
+df.show()
+
+
+row_count = df.count()
+print("Number of rows:", row_count)
+
+# Find the number of columns in the DataFrame
+column_count = len(df.columns)
+print("Number of columns:", column_count)
+
+
+# Repartition the DataFrame into 10 partitions
+df1 = df.repartition(10)
+
+df1.show()
+
+
+In Apache Spark, partition data is stored in the same DataFrame, but it is physically distributed across the cluster (or across multiple machines) to improve performance when working with large datasets. Each partition is a separate chunk of the data that can be processed in parallel.
+ 
+    When you perform an operation on a DataFrame, Spark will automatically distribute the operation across all the partitions in the DataFrame, so that the operation can be done in parallel. This allows Spark to handle large datasets more efficiently, by dividing the work among multiple machines.
+
+df1.rdd.mapPartitionsWithIndex(lambda idx, it: [(idx, list(it))]).collect()
+
+
+# Alternatively, you can use the coalesce() method to reduce the number of partitions
+df2 = df.coalesce(5)
+
+
+df2.rdd.mapPartitionsWithIndex(lambda idx, it: [(idx, list(it))]).collect()
