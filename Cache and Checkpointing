@@ -1,0 +1,19 @@
+input = "/FileStore/tabinput = "/FileStore/tables/train.csv"les/train.csv"
+
+df = spark.read.csv(input, header='True', inferSchema=True)
+df.show()
+
+
+You can cache a DataFrame or RDD by calling the .cache() or .persist() method on it. Once the DataFrame or RDD is cached, Spark will automatically use the cached version when you perform operations on it.
+df.cache()
+
+Checkpointing
+You can checkpoint a DataFrame or RDD by calling the .checkpoint() method on it and specifying the directory where you want to save the checkpoint
+import os
+
+os.mkdir("CheckPoint")
+
+spark.sparkContext.setCheckpointDir("/FileStore/tables/CheckPoint")
+
+# checkpoint a DataFrame
+df.checkpoint()
