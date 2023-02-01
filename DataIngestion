@@ -1,0 +1,39 @@
+# Load the csv file into a Databrciks using Spark dataframe
+
+df=spark.read.format("csv").option("header","True").option("inferSchema","True").load("/FileStore/tables/DataIngestion/StudentsPerformance.csv")
+
+display(df)
+
+type(df)
+
+df.columns
+
+df.printSchema()
+
+### 2. Load the XML file into a Databrciks using Spark dataframe.
+
+%fs head dbfs:/FileStore/tables/DataIngestion/sample_xml.xml
+
+InputPath="dbfs:/FileStore/tables/DataIngestion/sample_xml.xml"
+tag_to_extract="Message"
+
+Go to Cluster => Select Libraries => Install New => Select Library Source = "Maven" => Coordinates => Search Packages => Select Maven Central => Search for the package required. Example: (com.databricks:spark-xml_2.12:0.15.0) => Install
+
+df1 = spark.read .format("com.databricks.spark.xml") .option("rowTag", tag_to_extract) .load("dbfs:/FileStore/tables/DataIngestion/sample_xml.xml")
+
+df1.display()
+
+df1.printSchema()
+
+f1.select("createdAt","description","feedsComment").show(5)
+
+
+### 3. Load the parquert files into a Databrciks using Spark dataframe.
+# dbfs:/FileStore/tables/DataIngestion/userdata1.parquet
+
+df2=spark.read.format("parquet").load("dbfs:/FileStore/tables/DataIngestion/userdata1.parquet")
+
+display(df2)
+
+df2.select("first_name","last_name","email").show(5)
+
